@@ -71,4 +71,43 @@ describe('extractComfyUiOutputAssets', () => {
       { filename: 'fallback.png', subfolder: '', type: 'output' },
     ])
   })
+
+  test('extracts non-image/video audio and file assets', () => {
+    const assets = extractComfyUiOutputAssets({
+      outputs: {
+        '21': {
+          audios: [
+            {
+              filename: 'voice.wav',
+              subfolder: 'audio',
+              type: 'output',
+            },
+          ],
+          files: [
+            {
+              filename: 'captions.json',
+              subfolder: 'metadata',
+              type: 'output',
+              format: 'json',
+            },
+          ],
+        },
+      },
+    })
+
+    expect(assets).toEqual([
+      {
+        filename: 'voice.wav',
+        subfolder: 'audio',
+        type: 'output',
+        format: undefined,
+      },
+      {
+        filename: 'captions.json',
+        subfolder: 'metadata',
+        type: 'output',
+        format: 'json',
+      },
+    ])
+  })
 })

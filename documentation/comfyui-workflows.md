@@ -31,6 +31,45 @@ Voice, sound, and music workflows can also be registered as ComfyUI workflows. S
 
 The workflow catalog is intentionally API-format JSON. GUI-exported ComfyUI workflows need to be exported or converted to API format before installation.
 
+## Local Smoke Workflow
+
+For a local ComfyUI server, the minimum settings are:
+
+- Provider: `ComfyUI`
+- Engine: `COMFYUI_WORKFLOW`
+- ComfyUI API URL: `http://localhost:8188`
+- ComfyUI Client ID: `clapper`
+- Auth fields: leave empty unless the local server is protected
+
+This API-format workflow is useful for a model-free local smoke test because it only uploads an input image and saves it back through ComfyUI:
+
+```json
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "@clapper/image"
+    }
+  },
+  "2": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["1", 0],
+      "filename_prefix": "clapper_smoke"
+    }
+  }
+}
+```
+
+Set `@clapper/image` to the segment input image value and map `@clapper/output` to node `2`. A successful run returns a ComfyUI `images` output from node `2`, which Clapper fetches through `/view` and stores as an image data URI on the resolved segment.
+
+Common output mappings are:
+
+- `SaveImage.images` -> image segment output
+- video output nodes returning `videos` or `gifs` -> video segment output
+- audio output nodes returning `audio` or `audios` -> voice, sound, or music segment output
+- generic output nodes returning `files` -> file-like asset fetched through the same `/view` path
+
 ## Runtime Behavior
 
 When a segment is resolved with provider `ComfyUI` and engine `COMFYUI_WORKFLOW`, Clapper:

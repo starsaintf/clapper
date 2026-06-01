@@ -199,17 +199,20 @@ export function extractComfyUiOutputAssets(
 }
 
 function extractOutputAssets(output: any): ComfyUiOutputAsset[] {
-  return ['images', 'videos', 'gifs', 'audio', 'audios'].flatMap((key) => {
-    const items = output?.[key]
-    if (!Array.isArray(items)) return []
-    return items
-      .filter((item) => item?.filename)
-      .map((item) => ({
-        filename: item.filename,
-        subfolder: item.subfolder || '',
-        type: item.type || 'output',
-      }))
-  })
+  return ['images', 'videos', 'gifs', 'audio', 'audios', 'files'].flatMap(
+    (key) => {
+      const items = output?.[key]
+      if (!Array.isArray(items)) return []
+      return items
+        .filter((item) => item?.filename)
+        .map((item) => ({
+          filename: item.filename,
+          subfolder: item.subfolder || '',
+          type: item.type || 'output',
+          format: item.format,
+        }))
+    }
+  )
 }
 
 function normalizeComfyUiUrl(apiUrl: string): string {
